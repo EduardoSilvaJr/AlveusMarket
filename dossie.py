@@ -385,9 +385,9 @@ with tab3:
             tickfont=dict(color="#ccc", size=12),
             tickmode="array",
             tickvals=top15["name"].tolist(),
-            ticktext=["  " + n for n in top15["name"].tolist()],
+            ticktext=["" for _ in top15["name"].tolist()],
         ),
-        margin=dict(l=190, r=70, t=10, b=50),
+        margin=dict(l=60, r=70, t=10, b=50),
         height=chart_h,
     )
     st.plotly_chart(fig1, use_container_width=True)
