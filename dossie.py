@@ -422,7 +422,14 @@ with tab4:
 
     @st.cache_data
     def load_world():
-        return gpd.read_file('/home/claude/ne_110m.geojson')
+        import os, urllib.request
+        path = "ne_110m.geojson"
+        if not os.path.exists(path):
+            url = ("https://raw.githubusercontent.com/nvkelso/"
+                   "natural-earth-vector/master/geojson/"
+                   "ne_110m_admin_0_countries.geojson")
+            urllib.request.urlretrieve(url, path)
+        return gpd.read_file(path)
 
     try:
         world = load_world()
