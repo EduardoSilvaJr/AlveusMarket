@@ -346,7 +346,8 @@ with tab3:
         text=[f"  {v:.1f}M" for v in top15["pme"]],
         textposition="outside",
         textfont=dict(color="#fff", size=11, family="Verdana"),
-        hovertemplate="%{y}: %{x:.1f}M PMEs<extra></extra>",
+        customdata=top15["name"].tolist(),
+        hovertemplate="%{customdata}: %{x:.1f}M PMEs<extra></extra>",
     ))
 
     # Nomes sem flag no eixo Y — flags adicionadas como imagens à esquerda
