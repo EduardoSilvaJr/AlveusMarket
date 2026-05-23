@@ -115,6 +115,24 @@ COUNTRIES = [
     {"name":"San Marino",        "lang":"it","pme":0.01, "flag":"🇸🇲","region":"Europa",            "ne":"San Marino"},
 ]
 
+ISO_MAP = {
+    "Brasil":"BR","Portugal":"PT","Angola":"AO","Moçambique":"MZ",
+    "Cabo Verde":"CV","Guiné-Bissau":"GW","Timor-Leste":"TL",
+    "Guiné Equatorial":"GQ","S. Tomé e Príncipe":"ST",
+    "México":"MX","Colômbia":"CO","Argentina":"AR","Espanha":"ES",
+    "Peru":"PE","Chile":"CL","Venezuela":"VE","Equador":"EC",
+    "Guatemala":"GT","Bolívia":"BO","Cuba":"CU","Rep. Dominicana":"DO",
+    "Honduras":"HN","Costa Rica":"CR","Paraguai":"PY","El Salvador":"SV",
+    "Panamá":"PA","Uruguai":"UY","Nicarágua":"NI","França":"FR",
+    "Rep. Dem. Congo":"CD","Marrocos":"MA","Argélia":"DZ","Canadá":"CA",
+    "Bélgica":"BE","Costa do Marfim":"CI","Camarões":"CM","Senegal":"SN",
+    "Tunísia":"TN","Madagascar":"MG","Suíça":"CH","Mali":"ML",
+    "Burkina Faso":"BF","Guiné":"GN","Ruanda":"RW","Níger":"NE",
+    "Haiti":"HT","Chade":"TD","Benin":"BJ","Togo":"TG","Congo":"CG",
+    "Burundi":"BI","Rep. Centro-Afr.":"CF","Gabão":"GA","Luxemburgo":"LU",
+    "Comores":"KM","Djibuti":"DJ","Itália":"IT","San Marino":"SM",
+}
+
 df = pd.DataFrame(COUNTRIES)
 TOTAL = df["pme"].sum()
 LANG_TOTALS = df.groupby("lang")["pme"].sum()
@@ -313,20 +331,41 @@ with tab2:
 with tab3:
     BG = "#0d0d0d"
 
-    # ── Bar chart: Top 15 (Plotly — suporta emoji de bandeiras) ──────────
+    # ── Bar chart: Top 15 com bandeiras via flagcdn.com ─────────────────
     st.markdown("**Top 15 países por volume de PMEs**")
     top15 = df.sort_values("pme", ascending=False).head(15).iloc[::-1]
+    row_h  = 32          # altura de cada barra em px
+    margin_l = 160       # espaço para bandeira + nome
+    chart_h  = len(top15) * row_h + 80
+
     fig1 = go.Figure(go.Bar(
         x=top15["pme"],
-        y=[f"{r['flag']}  {r['name']}" for _, r in top15.iterrows()],
+        y=top15["name"],
         orientation="h",
         marker_color=[COLORS[r["lang"]] for _, r in top15.iterrows()],
-        text=[f"{v:.1f}M" for v in top15["pme"]],
+        text=[f"  {v:.1f}M" for v in top15["pme"]],
         textposition="outside",
         textfont=dict(color="#fff", size=11, family="Verdana"),
         hovertemplate="%{y}: %{x:.1f}M PMEs<extra></extra>",
     ))
+
+    # Add flag images via flagcdn.com
+    images = []
+    for i, (_, row) in enumerate(top15.iterrows()):
+        iso = ISO_MAP.get(row["name"], "")
+        if not iso:
+            continue
+        images.append(dict(
+            source=f"https://flagcdn.com/24x18/{iso.lower()}.png",
+            xref="paper", yref="y",
+            x=-0.01, y=row["name"],
+            sizex=0.06, sizey=0.7,
+            xanchor="right", yanchor="middle",
+            layer="above",
+        ))
+
     fig1.update_layout(
+        images=images,
         paper_bgcolor="#0d0d0d",
         plot_bgcolor="#111111",
         font=dict(color="#aaa", family="Verdana"),
@@ -334,12 +373,11 @@ with tab3:
             title="Milhões de PMEs",
             gridcolor="#1a1a1a",
             tickfont=dict(color="#666"),
-            range=[0, 26],
+            range=[0, 27],
         ),
         yaxis=dict(tickfont=dict(color="#ccc", size=12)),
-        margin=dict(l=10, r=60, t=10, b=40),
-        height=480,
-        bargroupgap=0.1,
+        margin=dict(l=margin_l, r=70, t=10, b=50),
+        height=chart_h,
     )
     st.plotly_chart(fig1, use_container_width=True)
 
