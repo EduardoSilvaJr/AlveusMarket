@@ -349,18 +349,24 @@ with tab3:
         hovertemplate="%{y}: %{x:.1f}M PMEs<extra></extra>",
     ))
 
-    # Add flag images via flagcdn.com
+    # Nomes sem flag no eixo Y — flags adicionadas como imagens à esquerda
+    n = len(top15)
     images = []
     for i, (_, row) in enumerate(top15.iterrows()):
         iso = ISO_MAP.get(row["name"], "")
         if not iso:
             continue
+        # yref="paper": posição 0=baixo, 1=cima; cada linha ocupa 1/n do espaço
+        y_paper = i / n + 0.5 / n
         images.append(dict(
-            source=f"https://flagcdn.com/24x18/{iso.lower()}.png",
-            xref="paper", yref="y",
-            x=-0.01, y=row["name"],
-            sizex=0.06, sizey=0.7,
-            xanchor="right", yanchor="middle",
+            source=f"https://flagcdn.com/40x30/{iso.lower()}.png",
+            xref="paper", yref="paper",
+            x=-0.005,           # logo à esquerda do eixo Y
+            y=y_paper,
+            sizex=0.045,        # largura relativa ao paper
+            sizey=0.055,        # altura relativa ao paper
+            xanchor="right",
+            yanchor="middle",
             layer="above",
         ))
 
@@ -375,8 +381,13 @@ with tab3:
             tickfont=dict(color="#666"),
             range=[0, 27],
         ),
-        yaxis=dict(tickfont=dict(color="#ccc", size=12)),
-        margin=dict(l=margin_l, r=70, t=10, b=50),
+        yaxis=dict(
+            tickfont=dict(color="#ccc", size=12),
+            tickmode="array",
+            tickvals=top15["name"].tolist(),
+            ticktext=["  " + n for n in top15["name"].tolist()],
+        ),
+        margin=dict(l=190, r=70, t=10, b=50),
         height=chart_h,
     )
     st.plotly_chart(fig1, use_container_width=True)
