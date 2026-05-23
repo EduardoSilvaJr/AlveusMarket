@@ -327,17 +327,19 @@ with tab3:
         hovertemplate="%{y}: %{x:.1f}M PMEs<extra></extra>",
     ))
     fig1.update_layout(
-        paper_bgcolor="#0d0d0d", plot_bgcolor="#111111",
+        paper_bgcolor="#0d0d0d",
+        plot_bgcolor="#111111",
         font=dict(color="#aaa", family="Verdana"),
         xaxis=dict(
-            title="Milhões de PMEs", gridcolor="#1a1a1a",
-            tickfont=dict(color="#666"), titlefont=dict(color="#666"),
+            title="Milhões de PMEs",
+            gridcolor="#1a1a1a",
+            tickfont=dict(color="#666"),
             range=[0, 26],
         ),
         yaxis=dict(tickfont=dict(color="#ccc", size=12)),
         margin=dict(l=10, r=60, t=10, b=40),
         height=480,
-        bargap=0.3,
+        bargroupgap=0.1,
     )
     st.plotly_chart(fig1, use_container_width=True)
 
