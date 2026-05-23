@@ -49,8 +49,8 @@ st.markdown("""
 # ── Data ──────────────────────────────────────────────────────────────────
 LANG_META = {
     "pt": {"label":"Português", "color":"#1a7a42", "paises":9,  "falantes":"~280 mi"},
-    "es": {"label":"Español",   "color":"#e07b00", "paises":20, "falantes":"~500 mi"},
-    "fr": {"label":"Français",  "color":"#2255b0", "paises":29, "falantes":"~320 mi"},
+    "es": {"label":"Espanhol",   "color":"#e07b00", "paises":20, "falantes":"~500 mi"},
+    "fr": {"label":"Frances",  "color":"#2255b0", "paises":29, "falantes":"~320 mi"},
     "it": {"label":"Italiano",  "color":"#c0392b", "paises":2,  "falantes":"~65 mi" },
 }
 
