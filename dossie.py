@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.graph_objects as go
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
@@ -312,30 +313,33 @@ with tab2:
 with tab3:
     BG = "#0d0d0d"
 
-    # ── Bar chart: Top 15 ─────────────────────────────────────────────────
+    # ── Bar chart: Top 15 (Plotly — suporta emoji de bandeiras) ──────────
     st.markdown("**Top 15 países por volume de PMEs**")
-    top15 = df.sort_values("pme", ascending=False).head(15)
-    fig1, ax1 = plt.subplots(figsize=(10, 6))
-    fig1.patch.set_facecolor(BG); ax1.set_facecolor("#111")
-    bars = ax1.barh(
-        [f"{r['flag']} {r['name']}" for _, r in top15.iterrows()],
-        top15["pme"],
-        color=[COLORS[r["lang"]] for _, r in top15.iterrows()],
-        height=0.65
+    top15 = df.sort_values("pme", ascending=False).head(15).iloc[::-1]
+    fig1 = go.Figure(go.Bar(
+        x=top15["pme"],
+        y=[f"{r['flag']}  {r['name']}" for _, r in top15.iterrows()],
+        orientation="h",
+        marker_color=[COLORS[r["lang"]] for _, r in top15.iterrows()],
+        text=[f"{v:.1f}M" for v in top15["pme"]],
+        textposition="outside",
+        textfont=dict(color="#fff", size=11, family="Verdana"),
+        hovertemplate="%{y}: %{x:.1f}M PMEs<extra></extra>",
+    ))
+    fig1.update_layout(
+        paper_bgcolor="#0d0d0d", plot_bgcolor="#111111",
+        font=dict(color="#aaa", family="Verdana"),
+        xaxis=dict(
+            title="Milhões de PMEs", gridcolor="#1a1a1a",
+            tickfont=dict(color="#666"), titlefont=dict(color="#666"),
+            range=[0, 26],
+        ),
+        yaxis=dict(tickfont=dict(color="#ccc", size=12)),
+        margin=dict(l=10, r=60, t=10, b=40),
+        height=480,
+        bargap=0.3,
     )
-    for bar, val in zip(bars, top15["pme"]):
-        ax1.text(bar.get_width()+0.15, bar.get_y()+bar.get_height()/2,
-            f"{val:.1f}M", va="center", color="#fff", fontsize=8.5,
-            fontweight="bold")
-    ax1.invert_yaxis()
-    ax1.set_xlabel("Milhões de PMEs", color="#666", fontsize=9)
-    ax1.tick_params(colors="#aaa", labelsize=9)
-    for spine in ax1.spines.values(): spine.set_edgecolor("#222")
-    ax1.grid(axis="x", color="#1a1a1a", linewidth=0.5)
-    ax1.set_xlim(0, 26)
-    plt.tight_layout(pad=1)
-    st.pyplot(fig1, use_container_width=True)
-    plt.close()
+    st.plotly_chart(fig1, use_container_width=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
